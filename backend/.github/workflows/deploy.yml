@@ -1,0 +1,17 @@
+
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Render deploy (example)
+        if: env.RENDER_SERVICE_ID != ''
+        run: echo "Hook your cloud deploy step here"

@@ -1,0 +1,60 @@
+
+name: Deploy (Multi-Cloud)
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Cloud provider"
+        required: true
+        type: choice
+        options: [aws, gcp, azure]
+        default: aws
+      environment:
+        description: "Environment"
+        required: true
+        default: staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event.inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Authenticate to ${{ github.event.inputs.provider }} via OIDC
+        run: |
+          if [ "${{ github.event.inputs.provider }}" = "aws" ]; then
+            echo "Using AWS role to assume via OIDC (configure in IAM)"
+          elif [ "${{ github.event.inputs.provider }}" = "gcp" ]; then
+            echo "Using GCP Workload Identity Federation"
+          else
+            echo "Using Azure Federated Identity Credentials"
+          fi
+
+      - name: Log in to container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.REGISTRY || 'ghcr.io' }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build & push image
+        run: |
+          IMAGE=${{ secrets.IMAGE || format('ghcr.io/{0}/quantum-wallet-backend', github.repository_owner) }}
+          TAG=${{ github.sha }}
+          docker build -t $IMAGE:$TAG .
+          docker push $IMAGE:$TAG
+          echo "IMAGE_OUT=$IMAGE:$TAG" >> $GITHUB_ENV
+
+      - name: Apply Helm umbrella
+        run: |
+          helm upgrade --install stack ./helm/umbrella -n quantum-wallet --create-namespace             --set quantum-wallet-api.image.repository=$(echo $IMAGE_OUT | cut -d: -f1)             --set quantum-wallet-api.image.tag=$(echo $IMAGE_OUT | cut -d: -f2)

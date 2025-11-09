@@ -1,0 +1,13 @@
+
+apiVersion: v2
+name: quantum-wallet-stack
+description: Umbrella chart deploying API, OTEL Collector, and NGINX Ingress
+type: application
+version: 0.1.0
+dependencies:
+  - name: quantum-wallet-api
+    version: 0.1.0
+    repository: "file://../quantum-wallet-api"
+  - name: otel-collector
+    version: 0.1.0
+    repository: "file://../otel-collector"

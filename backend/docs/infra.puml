@@ -1,0 +1,22 @@
+
+@startuml
+title Quantum Wallet - Multi-Cloud Overview
+actor User
+node "Kubernetes Cluster" {
+  node "Namespace: quantum-wallet" {
+    [API Deployment]
+    [OTEL Collector]
+  }
+  node "Namespace: observability" {
+    [Grafana]
+  }
+}
+cloud "Cloud Provider" {
+  [AWS EKS] as eks
+  [GCP GKE] as gke
+  [Azure AKS] as aks
+}
+User --> [API Deployment]
+[API Deployment] --> [OTEL Collector]
+[OTEL Collector] --> [Grafana]
+@enduml

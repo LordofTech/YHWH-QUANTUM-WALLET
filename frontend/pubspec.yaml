@@ -1,0 +1,36 @@
+
+name: quantum_wallet_app
+description: Quantum Wallet Mobile App
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_blue_plus: ^1.5.0
+  dio: ^5.4.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  intl: ^0.19.0
+  firebase_auth: ^4.10.0
+  firebase_core: ^2.24.0
+  geolocator: ^12.0.0
+  flutter_local_notifications: ^17.0.0
+  flutter_tts: ^4.0.0
+  shared_preferences: ^2.2.3
+  flutter_svg: ^2.0.10
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.6
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/

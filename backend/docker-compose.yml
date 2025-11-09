@@ -1,0 +1,60 @@
+
+version: "3.9"
+services:
+  db:
+    image: postgis/postgis:16-3.4
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: quantum_wallet
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d quantum_wallet"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/quantum_wallet?schema=public
+      - FIREBASE_PROJECT_ID=${FIREBASE_PROJECT_ID:-demo-project}
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    command: ["node", "dist/server.js"]
+volumes:
+  db_data:
+
+
+redis:
+  image: redis:7-alpine
+  ports:
+    - "6379:6379"
+  healthcheck:
+    test: ["CMD", "redis-cli", "ping"]
+    interval: 5s
+    timeout: 3s
+    retries: 20
+
+
+  environment:
+    - OTEL_SERVICE_NAME=quantum-wallet-backend
+    # - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+
+# otel-collector (optional)
+# otel-collector:
+#   image: otel/opentelemetry-collector-contrib:0.108.0
+#   command: ["--config=/etc/otelcol/config.yaml"]
+#   volumes:
+#     - ./ops/otel-collector-config.yaml:/etc/otelcol/config.yaml
+#   ports:
+#     - "4318:4318"

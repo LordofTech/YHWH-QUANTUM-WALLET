@@ -1,0 +1,52 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uid   String @id
+  role  Role
+  created_at DateTime @default(now())
+  wallets Wallet[]
+}
+
+model Wallet {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  user_id    String
+  type       WalletType
+  name       String?
+  balance    Decimal  @default(0.00)
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [uid], onDelete: Cascade)
+  transactions Transaction[]
+}
+
+model Transaction {
+  id         String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  wallet_id  String   @db.Uuid
+  amount     Decimal
+  type       String
+  status     String   @default("pending")
+  metadata   Json?
+  created_at DateTime @default(now())
+
+  wallet Wallet @relation(fields: [wallet_id], references: [id], onDelete: Cascade)
+}
+
+enum Role {
+  user
+  agent
+  admin
+}
+
+enum WalletType {
+  primary
+  child
+  agent
+}

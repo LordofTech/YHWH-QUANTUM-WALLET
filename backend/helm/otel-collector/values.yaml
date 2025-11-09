@@ -1,0 +1,32 @@
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+  tag: 0.108.0
+  pullPolicy: IfNotPresent
+
+service:
+  port: 4318
+
+config: |
+  receivers:
+    otlp:
+      protocols:
+        http:
+
+  processors:
+    batch: {}
+
+  exporters:
+    logging:
+      loglevel: info
+
+  service:
+    pipelines:
+      traces:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [logging]
+      metrics:
+        receivers: [otlp]
+        processors: [batch]
+        exporters: [logging]

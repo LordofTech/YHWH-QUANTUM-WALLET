@@ -1,0 +1,15 @@
+
+services:
+  - type: web
+    name: quantum-wallet-backend
+    runtime: docker
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: FIREBASE_PROJECT_ID
+        sync: false
+      - key: NODE_ENV
+        value: production
+      - key: REDIS_URL
+        sync: false
+    plan: free

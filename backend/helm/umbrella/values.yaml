@@ -1,0 +1,12 @@
+
+quantum-wallet-api:
+  image:
+    repository: ghcr.io/owner/quantum-wallet-backend
+    tag: latest
+  secrets:
+    DATABASE_URL: ""
+    FIREBASE_PROJECT_ID: ""
+    REDIS_URL: ""
+    ADMIN_UID: ""
+
+otel-collector: {}

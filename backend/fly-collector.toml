@@ -1,0 +1,15 @@
+
+app = "quantum-wallet-otel-collector"
+primary_region = "ams"
+
+[build]
+  image = "otel/opentelemetry-collector-contrib:0.108.0"
+
+[env]
+
+[[services]]
+  internal_port = 4318
+  protocol = "tcp"
+  [[services.ports]]
+    handlers = ["http"]
+    port = 4318

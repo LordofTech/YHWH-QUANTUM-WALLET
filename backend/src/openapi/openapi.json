@@ -1,0 +1,143 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Quantum Wallet Backend API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "Health",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/api/wallet/{id}": {
+      "get": {
+        "summary": "Get wallet by ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "wallet"
+          }
+        }
+      }
+    },
+    "/api/wallet": {
+      "post": {
+        "summary": "Create wallet",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "user_id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "user_id",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "created"
+          }
+        }
+      }
+    },
+    "/api/tx/online": {
+      "post": {
+        "summary": "Create online tx",
+        "responses": {
+          "200": {
+            "description": "tx created"
+          }
+        }
+      }
+    },
+    "/api/tx": {
+      "get": {
+        "summary": "List transactions",
+        "parameters": [
+          {
+            "name": "walletId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "list"
+          }
+        }
+      }
+    },
+    "/api/tx/geo/nearby": {
+      "get": {
+        "summary": "Nearby transactions",
+        "responses": {
+          "200": {
+            "description": "list"
+          }
+        }
+      }
+    },
+    "/api/sync/reconcile": {
+      "post": {
+        "summary": "Reconcile offline transactions",
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}
